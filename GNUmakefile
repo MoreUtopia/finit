@@ -8,4 +8,4 @@ SOURCES := $(shell find src -type f -name '*.c')
 
 $(OUT_PATH): $(SOURCES)
 	mkdir -p $(dir $@)
-	$(CC) $(SOURCES) -static -ffreestanding -nostartfiles -nostdlib -DINIT_PATH=\"$(INIT_PATH)\" -o $@
+	$(CC) $(SOURCES) -static -ffreestanding -nostartfiles -nostdlib -fno-stack-protector -DINIT_PATH=\"$(INIT_PATH)\" -o $@

@@ -28,6 +28,8 @@ typedef unsigned int uint32_t;
 typedef signed long long int64_t;
 typedef unsigned long long uint64_t;
 
+#define NULL (void*)0
+
 #if defined(__x86_64__)
 
 #define __LIBC_SYSCALL_REG0 "rax"
@@ -261,27 +263,59 @@ void writet(char* what) {
     __libc_syscall3(5, 2, (uintptr_t)&nl, 1);
 }
 
-int main() {
-    char* init_path = INIT_PATH;
-    
-    writet("launching init executable: " INIT_PATH);
+void print_error(uintptr_t errcode) {
+    uintptr_t index = errcode * (-1);
 
-    uintptr_t res = __libc_syscall2(2001, (uintptr_t)init_path, 1);
+    char* error_table[] = {
+        [1] = "Not implemented",
+        [2] = "Invalid argument",
+        [3] = "No such file or directory",
+        [4] = "Filesystem node type mismatch",
+        [5] = "Permission denied",
+        [6] = "Buffer too small",
+        [7] = "Message too large",
+        [8] = "Bad executable",
+        [9] = "No memory"
+    };
 
-    if (res == -3) {
-        writet("no such executable");
-        return 1;
-    } else if (res == -8) {
-        writet("bad executable");
-        return -1;
-    } else if (res < 0) {
-        writet("unknown error");
-        return -1;
+    if (index > (sizeof(error_table) / sizeof(char*)) || !error_table[index]) {
+        return writet("Unknown error");
     }
 
-    while (1) continue;
+    return writet(error_table[index]);
+}
+
+int main() {
+    writet(
+        "finit - historically first init system for the Utopia kernel\n"
+        "MIT-licensed, source code at https://github.com/MoreUtopia/finit\n"
+    );
+
+    char* init_path = INIT_PATH;
+    writet("Becoming another init executable: " INIT_PATH);
+
+    intptr_t res = __libc_syscall4(2002, (uintptr_t)init_path, 1, (uintptr_t)NULL, (uintptr_t)NULL);
+
+    if (res < 0) {
+        print_error(res);
+        writet(
+            "It looks like becoming another executable is not supported in the kernel.\n"
+            "Falling back to spawning an executable."
+        );
+        
+        intptr_t spawn_res = __libc_syscall4(2001, (uintptr_t)init_path, 1, (uintptr_t)NULL, (uintptr_t)NULL);
+        
+        if (spawn_res < 0) {
+            print_error(spawn_res);
+            writet("Terminate.");
+            return -1;
+        }
+    }
+
+    for (;;) continue;
 } 
 
+__attribute__((force_align_arg_pointer))
 void _start() {
     main();
     __libc_syscall0(2000);

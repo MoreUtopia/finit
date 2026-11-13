@@ -1,0 +1,3 @@
+[submodule "external/ulibc"]
+	path = external/ulibc
+	url = https://github.com/MoreUtopia/ulibc

@@ -1,6 +1,5 @@
 # finit
 
-Historically first real system init[^1][^2] for Utopia.
+Historically first real system init for the [Utopia](https://github.com/gorciu-official/Utopia/) kernel that emerged from [fsstrap](https://github.com/MoreUtopia/fsstrap). Its job is to launch another init executable using the Linux syscall ABI, which exposes more functionality to the running programs.
 
-[^1]: Previously, random programs that were not written with the intention of running as system inits (like [JUAMP](https://github.com/gorciu-official/JUAMP), [nsh](https://github.com/na-razie-bez-nicku/nsh/tree/main) or [bash](https://www.gnu.org/software/bash/)), were running as PID 1 through the Linux compatibility layer.
-[^2]: Technically, the fsstrap-bundled PID 1 was first, but this is the exact init, except now maintained out of fsstrap's source tree.
+Uses the [ulibc](https://github.com/MoreUtopia/ulibc) C standard library.

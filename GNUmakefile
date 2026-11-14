@@ -3,7 +3,7 @@ INIT_PATH ?= /init2
 OUT_PATH ?= target/init 
 
 # used for development purposes
-LOCAL_ULIBC_PATH ?= external/ulibc 
+LOCAL_ULIBC_PATH ?= external/ulibc
 
 CC := $(CROSS_COMPILE)gcc
 
